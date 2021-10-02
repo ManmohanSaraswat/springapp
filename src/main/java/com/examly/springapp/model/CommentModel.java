@@ -2,15 +2,19 @@ package com.examly.springapp.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="comments")
 public class CommentModel {
 	@Id
-	@Column(nullable=false, length = 60)
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private String commentId;
 	
 	@Column(nullable=false, length=300)

@@ -28,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.examly.springapp.model.PostModel;
+import com.examly.springapp.response.ResponseFile;
+import com.examly.springapp.service.PostService;
 @CrossOrigin
 @RestController
 public class PostController{

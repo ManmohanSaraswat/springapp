@@ -2,13 +2,20 @@ package com.examly.springapp.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="users")
 public class UserModel {
-    @Id
+	@Id
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
+	private String username;
+	
     @Column(nullable = false, unique = true, length = 60)
     private String email;
     
@@ -21,34 +28,25 @@ public class UserModel {
     @Column(nullable = true, length = 60)
     private String lastname;
     
-    @Column(nullable = true, length = 200)
-    private String description;
-    
-    @Column(nullable = true, length = 100)
-    private String profile_pic;
-    
-    @Column(nullable = false, columnDefinition="bigint(10) DEFAULT 0")
+    @Column(nullable = true, columnDefinition="bigint(10) DEFAULT 0")
     private Long posts;
     
-    @Column(nullable = false, columnDefinition="bigint(10) DEFAULT 0")
+    @Column(columnDefinition="bigint(10)")
     private Long followers;
     
-    @Column(nullable = false, columnDefinition="bigint(10) DEFAULT 0")
+    @Column(nullable = true, columnDefinition="bigint(10) DEFAULT 0")
     private Long following;
     
-    @Column(nullable = false, columnDefinition="BOOLEAN DEFAULT true")
+    @Column(nullable = true, columnDefinition="BOOLEAN DEFAULT false")
     private boolean active;
     
-    @Column(nullable = true, columnDefinition="char(15)")
+    @Column(nullable = true, columnDefinition="char(15) DEFAULT '0'")
     private String mobileNumber;
 
-    @Column(nullable = false, columnDefinition="char(15) DEFAULT 'user'")
+    @Column(nullable = true, columnDefinition="char(15) DEFAULT 'user'")
     private String role;
-    
-    @Column(nullable = false, columnDefinition="char(60)")
-    private String userName;
 
-	public String getEmail() {
+	public String getEmail(){
 		return email;
 	}
 
@@ -67,7 +65,15 @@ public class UserModel {
 	public String getFirstname() {
 		return firstname;
 	}
+	
+    public String getUsername() {
+		return username;
+	}
 
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
 	public void setFirstname(String firstname) {
 		this.firstname = firstname;
 	}
@@ -78,22 +84,6 @@ public class UserModel {
 
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getProfile_pic() {
-		return profile_pic;
-	}
-
-	public void setProfile_pic(String profile_pic) {
-		this.profile_pic = profile_pic;
 	}
 
 	public Long getPosts() {
@@ -144,20 +134,12 @@ public class UserModel {
 		this.role = role;
 	}
 
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
 	@Override
 	public String toString() {
-		return "UserModel [email=" + email + ", password=" + password + ", firstname=" + firstname + ", lastname="
-				+ lastname + ", description=" + description + ", profile_pic=" + profile_pic + ", posts=" + posts
-				+ ", followers=" + followers + ", following=" + following + ", active=" + active + ", mobileNumber="
-				+ mobileNumber + ", role=" + role + ", userName=" + userName + "]";
+		return "UserModel [username=" + username + ", email=" + email + ", password=" + password + ", firstname="
+				+ firstname + ", lastname=" + lastname + ", posts=" + posts + ", followers=" + followers
+				+ ", following=" + following + ", active=" + active + ", mobileNumber=" + mobileNumber + ", role="
+				+ role + "]";
 	}
 
 }

@@ -1,6 +1,8 @@
-package com.examly.springapp.controller;
+package com.examly.springapp.service;
 
 import com.examly.springapp.model.PostModel;
+import com.examly.springapp.repository.PostRepository;
+
 import java.io.IOException;
 import java.util.stream.Stream;
 

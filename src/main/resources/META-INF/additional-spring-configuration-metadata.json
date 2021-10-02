@@ -1,5 +1,5 @@
 {"properties": [{
   "name": "uploadDir",
   "type": "java.lang.String",
-  "description": "A description for 'upoadDir'"
+  "description": "A description for 'uploadDir'"
 }]}
