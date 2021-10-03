@@ -29,6 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.examly.springapp.model.PostModel;
 import com.examly.springapp.response.ResponseFile;
+import com.examly.springapp.response.ResponseMessage;
 import com.examly.springapp.service.PostService;
 @CrossOrigin
 @RestController
@@ -41,7 +42,7 @@ public class PostController{
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 
-	@RequestMapping(value="/save", method=RequestMethod.POST)
+	@RequestMapping(value="/addImage", method=RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> createPost(
 			HttpServletRequest request
 			,@RequestParam("file") MultipartFile file) {
@@ -98,8 +99,9 @@ public class PostController{
 		}
 		return imageId;	
 	}
-	@GetMapping("/show")
+	@GetMapping("/image")
 	  public ResponseEntity<List<ResponseFile>> getListFiles() {
+		try {
 	    List<ResponseFile> files = postService.getAllFiles().map(dbFile -> {
 	      String fileDownloadUri = ServletUriComponentsBuilder
 	          .fromCurrentContextPath()
@@ -115,5 +117,8 @@ public class PostController{
 	    }).collect(Collectors.toList());
 
 	    return ResponseEntity.status(HttpStatus.OK).body(files);
+		}catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
 	  }
 }

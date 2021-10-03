@@ -1,8 +1,11 @@
 package com.examly.springapp.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +32,9 @@ public class SignupController {
 	public  @ResponseBody ResponseEntity<UserCreationResponse> saveUser(@RequestBody UserModel user){
 		String email = user.getEmail();
 		UserCreationResponse response = new UserCreationResponse();
-		if(repo.findByEmail(email).size() == 0) {
+		LoginModel check = loginrepo.findById(email).orElse(null);
+		
+		if(check == null) {
 			if(user.getFirstname().length() <= 2) {
 				response.setResponse("false");
 				response.setMessage("FistName Length Must be greater than 2 ");
@@ -38,7 +43,7 @@ public class SignupController {
 				
 			else if(user.getPassword().length() <= 5){
 				response.setResponse("false");
-				response.setMessage("Password Length Must be greater than 2 ");
+				response.setMessage("Password Length Must be greater than 5 ");
 				return new ResponseEntity<> (response,  HttpStatus.BAD_REQUEST);
 			}else {
 				LoginModel loginModel = new LoginModel();

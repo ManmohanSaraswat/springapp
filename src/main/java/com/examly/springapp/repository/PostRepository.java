@@ -7,4 +7,5 @@ import com.examly.springapp.model.PostModel;
 
 @Repository
 public interface PostRepository extends JpaRepository<PostModel, String> {
+
 }
