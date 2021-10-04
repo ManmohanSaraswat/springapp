@@ -26,7 +26,6 @@ public class CommentModel {
 	public String getCommentId() {
 		return commentId;
 	}
-
 	public void setCommentId(String commentId) {
 		this.commentId = commentId;
 	}

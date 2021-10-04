@@ -1,11 +1,9 @@
 package com.examly.springapp.controller;
 
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,11 +44,12 @@ public class SignupController {
 				response.setMessage("Password Length Must be greater than 5 ");
 				return new ResponseEntity<> (response,  HttpStatus.BAD_REQUEST);
 			}else {
+				repo.save(user);
 				LoginModel loginModel = new LoginModel();
 				loginModel.setEmail(user.getEmail());
 				loginModel.setPassword(user.getPassword());
 				loginrepo.save(loginModel);
-				repo.save(user);
+				
 				response.setMessage("User Created Successfully");
 				response.setResponse("true");
 				return new ResponseEntity<> (response, HttpStatus.OK);

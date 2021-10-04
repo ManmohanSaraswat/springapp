@@ -9,6 +9,6 @@ import com.examly.springapp.model.UserModel;
 
 @Repository
 public interface UserRepository extends CrudRepository<UserModel, String>{
-	public User findByEmail(String Email);
+	public UserModel findByEmail(String Email);
 	
 }

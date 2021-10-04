@@ -23,17 +23,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.examly.springapp.model.LoginModel;
+import com.examly.springapp.model.UserModel;
 import com.examly.springapp.repository.LoginRepository;
+import com.examly.springapp.repository.UserRepository;
 import com.examly.springapp.response.ResponseMessage;
+import com.examly.springapp.response.SuccessUserLoginMessage;
 import com.examly.springapp.service.LoginService;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 
 @CrossOrigin
 @RestController
 public class LoginController {
+	@Autowired 
+	UserRepository userRepo;
 	@Autowired
 	LoginRepository loginrepo;
 	@Autowired 
@@ -55,7 +57,14 @@ public class LoginController {
 		}
 		UserDetails userDetails = this.loginService.loadUserByUsername(user.getEmail());
 		String token = this.jwtutil.generateToken(userDetails);
-		return new ResponseEntity<>(new ResponseMessage(token, userDetails.getUsername()),
+		SuccessUserLoginMessage message = new SuccessUserLoginMessage();
+		UserModel usr = userRepo.findByEmail(user.getEmail());
+		message.setStatus(200);
+		message.setToken(token);
+		message.setMessage("User Logged In Successfully");
+		message.setUserId(usr.getUsername());
+		message.setUserName(usr.getFirstname() + " " + usr.getLastname());
+		return new ResponseEntity<>(message, 
 				HttpStatus.OK);	
 	}	
 }

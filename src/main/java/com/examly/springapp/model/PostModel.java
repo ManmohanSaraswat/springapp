@@ -1,6 +1,9 @@
 package com.examly.springapp.model;
 
 
+import java.util.Arrays;
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +22,9 @@ public class PostModel {
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
     private String imageId;
     
+	@Column(nullable = false)
+	private String userId;
+	
     @Column(nullable = false, length = 40)
     private String imageName;
     
@@ -29,19 +35,39 @@ public class PostModel {
     @Column(nullable = true, length = 40)
     private String imageTag;
     
+    @Column(nullable = true, length = 250)
+    private String imageDescription;
+    
     @OneToOne
     private CommentModel comments;
     
-    public PostModel() {
+    public CommentModel getComments() {
+		return comments;
+	}
+	public void setComments(CommentModel comments) {
+		this.comments = comments;
+	}
+	public String getImageDescription() {
+		return imageDescription;
+	}
+	public void setImageDescription(String imageDescription) {
+		this.imageDescription = imageDescription;
+	}
+	
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public PostModel() {
     	super();
     }
-    public PostModel(String imageName, String imageTag, byte[] bs) {
-    	
+    public PostModel(String imageName, String imageTag, byte[] bs, String userId) {
         	this.imageName = imageName;
         	this.imageTag = imageTag;
 			this.image = bs;
-		
-    	
+			this.userId = userId;
     }
 	public String getImageId() {
 		return imageId;
@@ -77,7 +103,7 @@ public class PostModel {
 
 	@Override
 	public String toString() {
-		return "ImageModel [imageId=" + imageId + ", imageName=" + imageName + ", image=" + image + ", imageTag="
-				+ imageTag + "]";
+		return "PostModel [imageId=" + imageId + ", imageName=" + imageName + ", image=" + Arrays.toString(image)
+				+ ", imageTag=" + imageTag + ", imageDescription=" + imageDescription + "]";
 	}
 }

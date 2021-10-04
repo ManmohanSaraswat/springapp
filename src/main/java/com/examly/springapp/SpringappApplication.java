@@ -31,7 +31,7 @@ import com.examly.springapp.service.LoginService;
 @EnableAutoConfiguration
 public class SpringappApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		SpringApplication.run(SpringappApplication.class, args);
 	}
 	

@@ -1,5 +1,7 @@
 package com.examly.springapp.response;
 
+import java.util.UUID;
+
 public class ResponseFile {
 	private String name;
 	private String url;

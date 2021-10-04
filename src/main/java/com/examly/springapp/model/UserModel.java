@@ -31,7 +31,7 @@ public class UserModel {
     @Column(nullable = true, columnDefinition="bigint(10) DEFAULT 0")
     private Long posts;
     
-    @Column(columnDefinition="bigint(10)")
+    @Column(nullable = true, columnDefinition="bigint(10)")
     private Long followers;
     
     @Column(nullable = true, columnDefinition="bigint(10) DEFAULT 0")
