@@ -1,9 +1,7 @@
 package com.examly.springapp.repository;
-import java.util.List;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.stereotype.Repository;
 
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import com.examly.springapp.model.UserModel;
 
 

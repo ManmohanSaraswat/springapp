@@ -44,6 +44,10 @@ public class SignupController {
 				response.setMessage("Password Length Must be greater than 5 ");
 				return new ResponseEntity<> (response,  HttpStatus.BAD_REQUEST);
 			}else {
+				user.setFollowers(0L);
+				user.setFollowing(0L);
+				user.setPosts(0L);
+				user.setMobileNumber("+91");
 				repo.save(user);
 				LoginModel loginModel = new LoginModel();
 				loginModel.setEmail(user.getEmail());

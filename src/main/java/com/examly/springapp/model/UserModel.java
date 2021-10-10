@@ -10,7 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name="users")
-public class UserModel {
+public class UserModel{
 	@Id
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")

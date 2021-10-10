@@ -2,11 +2,11 @@ package com.examly.springapp.response;
 
 public class ResponseMessage {
 	  private String message;
-	  private String status;
+	  private int status;
 	  public ResponseMessage() {
 		  super();
 	  }
-	  public ResponseMessage(String message, String status) {
+	  public ResponseMessage(String message, int status) {
 		  this.message = message;
 		  this.setStatus(status);
 	  }
@@ -21,10 +21,10 @@ public class ResponseMessage {
 	  public void setMessage(String message) {
 	    this.message = message;
 	  }
-	public String getStatus() {
+	public int getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 
