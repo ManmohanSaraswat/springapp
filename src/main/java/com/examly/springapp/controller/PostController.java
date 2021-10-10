@@ -38,6 +38,7 @@ import com.examly.springapp.repository.PostRepository;
 import com.examly.springapp.response.ImageDetailsResponse;
 import com.examly.springapp.response.ResponseFile;
 import com.examly.springapp.response.ResponseMessage;
+import com.examly.springapp.service.CommentService;
 import com.examly.springapp.service.LoginService;
 import com.examly.springapp.service.PostService;
 import com.examly.springapp.service.UserService;
@@ -52,6 +53,9 @@ public class PostController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private CommentService commentService;
 	
 	@Autowired
 	private PostRepository postRepo;
@@ -69,7 +73,6 @@ public class PostController {
 		}else {
 			ResponseFile response = new ResponseFile();
 			PostModel file = fileDB.get();
-			response.setComments(file.getComments());
 			response.setDescription(file.getImageDescription());
 			response.setId(file.getImageId());
 			response.setName(file.getImageName());
@@ -77,6 +80,7 @@ public class PostController {
 			response.setType(file.getImageTag());
 			response.setUserId(file.getUserId());
 			response.setUserName(file.getUserName());
+			response.setComments(commentService.getComment(file.getImageId()));
 			return ResponseEntity.ok().body(response);
 		}
 	}
@@ -149,19 +153,30 @@ public class PostController {
 	}
 
 	@GetMapping("/files/{id}")
-	public ResponseEntity<byte[]> getFile(@PathVariable String id) {
+	public ResponseEntity<?> getFile(@PathVariable String id) {
+		ResponseMessage response = new ResponseMessage();
+		try {
 		PostModel fileDB = postService.getFile(id);
-
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getImageName() + "\"")
 				.body(fileDB.getImage());
+		}catch(Exception e) {
+			response.setMessage("Broken Url");
+			response.setStatus(400);
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@GetMapping("/post/deletePost/id/{imageId}")
 	public @ResponseBody ResponseEntity<ResponseMessage> showProductDetails(@PathVariable String imageId) {
 		ResponseMessage msg = new ResponseMessage();
-		System.out.println(imageId);
+		try {
 		postService.deletePostbyId(imageId);
+		}catch(Exception e) {
+			msg.setMessage("Broken Url");
+			msg.setStatus(400);
+			return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+		}
 		msg.setMessage("Post Deleted Successfully");
 		msg.setStatus(200);
 		return new ResponseEntity<>(msg, HttpStatus.OK);
@@ -175,8 +190,10 @@ public class PostController {
 			for(PostModel file : files) {
 				String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
 						.path(file.getImageId().toString()).toUriString();
-				response.add(new ResponseFile(file.getImageName(), fileDownloadUri, file.getImageTag(),
-						file.getImageId(), file.getImageDescription(), file.getComments(), file.getUserId(), file.getUserName()));
+				ResponseFile responseFile = new ResponseFile(file.getImageName(), fileDownloadUri, file.getImageTag(),
+						file.getImageId(), file.getImageDescription(), file.getUserId(), file.getUserName());
+				responseFile.setComments(commentService.getComment(file.getImageId()));
+				response.add(responseFile);
 			}
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} catch (Exception e) {

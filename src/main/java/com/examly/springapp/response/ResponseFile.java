@@ -1,5 +1,7 @@
 package com.examly.springapp.response;
 
+import java.util.List;
+
 import com.examly.springapp.model.CommentModel;
 
 public class ResponseFile {
@@ -10,10 +12,17 @@ public class ResponseFile {
 	private String description;
 	private String userId;
 	private String userName;
+	private List<CommentModel> comments;
 	
-	private CommentModel comments;
 	
-	
+	public List<CommentModel> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<CommentModel> comments) {
+		this.comments = comments;
+	}
+
 	public String getUserId() {
 		return userId;
 	}
@@ -30,24 +39,17 @@ public class ResponseFile {
 		this.description = description;
 	}
 
-	public CommentModel getComments() {
-		return comments;
-	}
-
-	public void setComments(CommentModel comments) {
-		this.comments = comments;
-	}
 	
 	public ResponseFile() {
 		super();
 	}
-	public ResponseFile(String name, String url, String type, String Id, String description, CommentModel comments, String userId, String userName) {
+	public ResponseFile(String name, String url, String type, String Id, String description, String userId, String userName) {
 		this.name = name;
 		this.url = url;
 		this.type = type;
 		this.id = Id;
 		this.description = description;
-		this.comments = comments;
+
 		this.userId = userId;
 		this.userName = userName;
 	}

@@ -1,10 +1,10 @@
 package com.examly.springapp.model;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -19,9 +19,12 @@ public class CommentModel {
 	
 	@Column(nullable=false, length=300)
 	private String comment;
-
-	@OneToOne
-	private UserModel user;
+	
+	@Column(nullable = false)
+	private String postId;
+	
+	@Column(nullable = false)
+	private String userId;
 
 	public String getCommentId() {
 		return commentId;
@@ -38,17 +41,17 @@ public class CommentModel {
 		this.comment = comment;
 	}
 
-	public UserModel getUser() {
-		return user;
-	}
-
-	public void setUser(UserModel user) {
-		this.user = user;
-	}
-
-	@Override
-	public String toString() {
-		return "CommentModel [commentId=" + commentId + ", comment=" + comment + ", user="+ user + "]";
-	}
 	
+	public String getPostId() {
+		return postId;
+	}
+	public void setPostId(String postId) {
+		this.postId = postId;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 }

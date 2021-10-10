@@ -18,7 +18,7 @@ public class UserService {
 		return user;
 	}
 	public boolean existsUser(String userId) {
-		if(userRepository.findById(userId).isPresent())
+		if(userRepository.existsById(userId))
 			return true;
 		else
 			return false;
