@@ -15,6 +15,7 @@ import com.examly.springapp.model.LoginModel;
 import com.examly.springapp.model.UserModel;
 import com.examly.springapp.repository.LoginRepository;
 import com.examly.springapp.repository.UserRepository;
+import com.examly.springapp.response.SignupRequest;
 import com.examly.springapp.response.UserCreationResponse;
 
 @CrossOrigin
@@ -25,35 +26,37 @@ public class SignupController {
 	
 	@Autowired
 	LoginRepository loginrepo;
-
 	@RequestMapping(value="/signup", method=RequestMethod.POST)
-	public  @ResponseBody ResponseEntity<UserCreationResponse> saveUser(@RequestBody UserModel user){
+	public  @ResponseBody ResponseEntity<UserCreationResponse> saveUser(@RequestBody SignupRequest user){
 		String email = user.getEmail();
 		UserCreationResponse response = new UserCreationResponse();
 		LoginModel check = loginrepo.findById(email).orElse(null);
-		
 		if(check == null) {
 			if(user.getFirstname().length() <= 2) {
 				response.setResponse("false");
 				response.setMessage("FistName Length Must be greater than 2 ");
 				return new ResponseEntity<> (response, HttpStatus.BAD_REQUEST);
 			}
-				
 			else if(user.getPassword().length() <= 5){
 				response.setResponse("false");
 				response.setMessage("Password Length Must be greater than 5 ");
 				return new ResponseEntity<> (response,  HttpStatus.BAD_REQUEST);
 			}else {
-				user.setFollowers(0L);
-				user.setFollowing(0L);
-				user.setPosts(0L);
-				user.setMobileNumber("+91");
-				repo.save(user);
+				UserModel userToSave = new UserModel();
+				userToSave.setFollowers(0L);
+				userToSave.setFollowing(0L);
+				userToSave.setPosts(0L);
+				userToSave.setMobileNumber("+91");
+				userToSave.setEmail(email);
+				userToSave.setFirstname(user.getFirstname());
+				userToSave.setLastname(user.getLastname());
+				userToSave.setActive(false);
+				userToSave.setRole(user.getRole());
+				repo.save(userToSave);
 				LoginModel loginModel = new LoginModel();
 				loginModel.setEmail(user.getEmail());
 				loginModel.setPassword(user.getPassword());
 				loginrepo.save(loginModel);
-				
 				response.setMessage("User Created Successfully");
 				response.setResponse("true");
 				return new ResponseEntity<> (response, HttpStatus.OK);

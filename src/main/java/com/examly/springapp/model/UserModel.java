@@ -19,9 +19,6 @@ public class UserModel{
     @Column(nullable = false, unique = true, length = 60)
     private String email;
     
-    @Column(nullable = false, length = 40)
-    private String password;
-    
     @Column(nullable = false, length = 60)
     private String firstname;
     
@@ -45,6 +42,7 @@ public class UserModel{
 
     @Column(nullable = true, columnDefinition="char(15) DEFAULT 'user'")
     private String role;
+    
 
 	public String getEmail(){
 		return email;
@@ -52,14 +50,6 @@ public class UserModel{
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getFirstname() {
@@ -136,7 +126,7 @@ public class UserModel{
 
 	@Override
 	public String toString() {
-		return "UserModel [username=" + username + ", email=" + email + ", password=" + password + ", firstname="
+		return "UserModel [username=" + username + ", email=" + email + ", firstname="
 				+ firstname + ", lastname=" + lastname + ", posts=" + posts + ", followers=" + followers
 				+ ", following=" + following + ", active=" + active + ", mobileNumber=" + mobileNumber + ", role="
 				+ role + "]";

@@ -1,13 +1,16 @@
 package com.examly.springapp.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.examly.springapp.model.CommentModel;
+import com.examly.springapp.model.UserModel;
 import com.examly.springapp.repository.CommentRepository;
 import com.examly.springapp.repository.PostRepository;
+import com.examly.springapp.repository.UserRepository;
 
 @Service
 public class CommentService {
@@ -17,11 +20,11 @@ public class CommentService {
 	public List<CommentModel> getComment(String postId){
 		return commentRepository.getCommentModelByPostId(postId);
 	}
-	public boolean addComment(String userId, String postId, String comment) {
+	public boolean addComment(UserModel userModel, String postId, String comment) {
 		CommentModel commentModel = new CommentModel();
 		commentModel.setComment(comment);
 		commentModel.setPostId(postId);
-		commentModel.setUserId(userId);
+		commentModel.setUserModel(userModel);
 		try {
 			commentRepository.save(commentModel);
 		}catch(Exception e) {
@@ -29,7 +32,12 @@ public class CommentService {
 		}
 		return true;
 	}
-	public boolean deleteComment(String userId, String postId, String comment) {
+	public boolean deleteComment(String commentId) {
+		Optional<CommentModel> comment = commentRepository.findById(commentId);
+		if(comment.isPresent()) {
+			commentRepository.deleteById(commentId);
+			return true;
+		}
 		return false;
 	}
 	public boolean updateComment(String userId, String postId, String comment) {

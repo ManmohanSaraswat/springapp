@@ -1,5 +1,6 @@
 package com.examly.springapp.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,6 +12,6 @@ import com.examly.springapp.model.PostModel;
 
 @Repository
 public interface PostRepository extends CrudRepository<PostModel, String> {
-
+	public List<PostModel> findAllByUserId(String userId);
 	public Optional<PostModel> findByImageId(String id);
 }

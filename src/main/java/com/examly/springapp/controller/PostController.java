@@ -47,36 +47,40 @@ import com.examly.springapp.service.UserService;
 @RestController
 public class PostController {
 	@Value("${uploadDir}")
+
 	private String uploadFolder;
 	@Autowired
+	private JwtUtil jwtUtil;
+
+	@Autowired
 	private PostService postService;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private CommentService commentService;
-	
+
 	@Autowired
 	private PostRepository postRepo;
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
-	
+
 	@GetMapping("/image/{id}")
-	public @ResponseBody ResponseEntity<?> imageDetails(@PathVariable String id){
+	public @ResponseBody ResponseEntity<?> imageDetails(@PathVariable String id) {
 		Optional<PostModel> fileDB = postRepo.findById(id);
-		if(fileDB.isEmpty()) {
+		if (fileDB.isEmpty()) {
 			ResponseMessage msg = new ResponseMessage();
 			msg.setMessage("Broken Url");
 			msg.setStatus(400);
-		return ResponseEntity.badRequest().body(msg);
-		}else {
+			return ResponseEntity.badRequest().body(msg);
+		} else {
 			ResponseFile response = new ResponseFile();
 			PostModel file = fileDB.get();
 			response.setDescription(file.getImageDescription());
 			response.setId(file.getImageId());
 			response.setName(file.getImageName());
-			response.setUrl("http://localhost:8080/files/"+file.getImageId());
+			response.setUrl("http://localhost:8080/files/" + file.getImageId());
 			response.setType(file.getImageTag());
 			response.setUserId(file.getUserId());
 			response.setUserName(file.getUserName());
@@ -87,17 +91,18 @@ public class PostController {
 
 	@RequestMapping(value = "/addImage", method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<ResponseMessage> createPost(HttpServletRequest request,
-			@RequestParam("file") MultipartFile file, @RequestParam("description") String description, @RequestParam("userid") String userId) {
+			@RequestParam("file") MultipartFile file, @RequestParam("description") String description,
+			@RequestParam("userid") String userId) {
 		ResponseMessage response = new ResponseMessage();
 		Optional<UserModel> user = userService.getUser(userId);
-		if(user.isEmpty()) {
+		if (user.isEmpty()) {
 			response.setStatus(400);
 			response.setMessage("Unauthorized Request");
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
-		
+
 		try {
-			if(file.isEmpty()) {
+			if (file.isEmpty()) {
 				response.setStatus(400);
 				response.setMessage("Select a Image to post");
 				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -107,12 +112,12 @@ public class PostController {
 				response.setStatus(400);
 				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
-			if(file.getSize() > 1024000L) {
+			if (file.getSize() > 1024000L) {
 				response.setMessage("Sorry! File Size is Large");
 				response.setStatus(400);
 				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
-				
+
 			String uploadDirectory = request.getServletContext().getRealPath(uploadFolder);
 			log.info("uploadDirectory:: " + uploadDirectory);
 			String fileName = file.getOriginalFilename();
@@ -121,8 +126,7 @@ public class PostController {
 			if (fileName == null || fileName.contains("..")) {
 				response.setMessage("Sorry! Filename contains invalid path sequence");
 				response.setStatus(400);
-				return new ResponseEntity<>(response,
-						HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
 			try {
 				File dir = new File(uploadDirectory);
@@ -140,7 +144,7 @@ public class PostController {
 				response.setMessage("Error in Saving File");
 				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 			}
-			String username = user.get().getFirstname() +" "+ user.get().getLastname();
+			String username = user.get().getFirstname() + " " + user.get().getLastname();
 			postService.store(file, description, userId, username);
 			response.setStatus(200);
 			response.setMessage("Post Uploaded Successfully");
@@ -155,12 +159,13 @@ public class PostController {
 	@GetMapping("/files/{id}")
 	public ResponseEntity<?> getFile(@PathVariable String id) {
 		ResponseMessage response = new ResponseMessage();
-		try {
-		PostModel fileDB = postService.getFile(id);
-		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getImageName() + "\"")
-				.body(fileDB.getImage());
-		}catch(Exception e) {
+		Optional<PostModel> fileDB = postService.getFile(id);
+		if (fileDB.isPresent()) {
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION,
+							"attachment; filename=\"" + fileDB.get().getImageName() + "\"")
+					.body(fileDB.get().getImage());
+		} else {
 			response.setMessage("Broken Url");
 			response.setStatus(400);
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -168,18 +173,43 @@ public class PostController {
 	}
 
 	@GetMapping("/post/deletePost/id/{imageId}")
-	public @ResponseBody ResponseEntity<ResponseMessage> showProductDetails(@PathVariable String imageId) {
+	public @ResponseBody ResponseEntity<ResponseMessage> deletePost(HttpServletRequest request,
+			@PathVariable String imageId) {
 		ResponseMessage msg = new ResponseMessage();
-		try {
-		postService.deletePostbyId(imageId);
-		}catch(Exception e) {
-			msg.setMessage("Broken Url");
-			msg.setStatus(400);
-			return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+		String token = request.getHeader("Authorization");
+		token = token.substring(7);
+		
+		String email = jwtUtil.extractUsername(token);
+		Optional<UserModel> userModel = userService.getUserByEmail(email);
+		if (userModel.isPresent()) {
+			UserModel userIsPresent = userModel.get();
+			Optional<PostModel> post = postService.getFile(imageId);
+			if (post.isEmpty()) {
+				msg.setMessage("Broken Url");
+				msg.setStatus(400);
+				return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+			}
+			PostModel getPost = post.get();
+			if (userIsPresent.getUsername().equals(getPost.getUserId())) {
+				try {
+					postService.deletePostbyId(imageId);
+				} catch (Exception e) {
+					msg.setMessage("Broken Url");
+					msg.setStatus(400);
+					return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+				}
+				msg.setMessage("Post Deleted Successfully");
+				msg.setStatus(200);
+				return new ResponseEntity<>(msg, HttpStatus.OK);
+			} else {
+				msg.setMessage("Unauthorized User");
+				msg.setStatus(400);
+				return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+			}
 		}
-		msg.setMessage("Post Deleted Successfully");
-		msg.setStatus(200);
-		return new ResponseEntity<>(msg, HttpStatus.OK);
+		msg.setMessage("Unauthorized User");
+		msg.setStatus(400);
+		return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
 	}
 
 	@GetMapping("/image")
@@ -187,7 +217,7 @@ public class PostController {
 		try {
 			Iterable<PostModel> files = postService.getAllFiles();
 			List<ResponseFile> response = new ArrayList<ResponseFile>();
-			for(PostModel file : files) {
+			for (PostModel file : files) {
 				String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
 						.path(file.getImageId().toString()).toUriString();
 				ResponseFile responseFile = new ResponseFile(file.getImageName(), fileDownloadUri, file.getImageTag(),

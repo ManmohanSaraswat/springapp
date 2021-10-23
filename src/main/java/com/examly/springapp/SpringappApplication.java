@@ -67,7 +67,6 @@ public class SpringappApplication {
 		public PasswordEncoder generateEncoder() {
 			return NoOpPasswordEncoder.getInstance();
 		}
-		
 		@Bean
 		public AuthenticationManager authManagerBean() throws Exception {
 			return super.authenticationManagerBean();

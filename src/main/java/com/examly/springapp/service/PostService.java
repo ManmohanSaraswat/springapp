@@ -5,6 +5,7 @@ import com.examly.springapp.repository.PostRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -39,11 +40,15 @@ public class PostService implements UserDetailsService {
 		postRepo.deleteById(id);
 	}
 	
-	public PostModel getFile(String id) {
-		return postRepo.findById(id).get();
+	public Optional<PostModel> getFile(String id) {
+		return postRepo.findById(id);
 	}
 	public Iterable<PostModel> getAllFiles() {
 		return postRepo.findAll();
+	}
+	
+	public List<PostModel> getAllPostByUser(String userId){
+		return postRepo.findAllByUserId(userId);
 	}
 	@Override
 	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {

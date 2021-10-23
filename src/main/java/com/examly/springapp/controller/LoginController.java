@@ -46,7 +46,7 @@ public class LoginController {
 		UserDetails userDetails = this.loginService.loadUserByUsername(user.getEmail());
 		String token = this.jwtutil.generateToken(userDetails);
 		SuccessUserLoginMessage message = new SuccessUserLoginMessage();
-		UserModel usr = userRepo.findByEmail(user.getEmail());
+		UserModel usr = userRepo.findByEmail(user.getEmail()).get();
 		message.setStatus(200);
 		message.setToken(token);
 		message.setMessage("User Logged In Successfully");

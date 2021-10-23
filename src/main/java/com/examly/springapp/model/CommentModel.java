@@ -5,6 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -23,8 +24,8 @@ public class CommentModel {
 	@Column(nullable = false)
 	private String postId;
 	
-	@Column(nullable = false)
-	private String userId;
+	@OneToOne
+	private UserModel userModel;
 
 	public String getCommentId() {
 		return commentId;
@@ -48,10 +49,11 @@ public class CommentModel {
 	public void setPostId(String postId) {
 		this.postId = postId;
 	}
-	public String getUserId() {
-		return userId;
+	public UserModel getUserModel() {
+		return userModel;
 	}
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUserModel(UserModel userModel) {
+		this.userModel = userModel;
 	}
+	
 }

@@ -10,9 +10,12 @@ import com.examly.springapp.repository.UserRepository;
 
 @Service
 public class UserService {
-	@Autowired 
+	@Autowired
 	private UserRepository userRepository;
-	
+	public Optional<UserModel> getUserByEmail(String email){
+		Optional<UserModel> user = userRepository.findByEmail(email);
+		return user;
+	}
 	public Optional<UserModel> getUser(String userId) {
 		Optional<UserModel> user = userRepository.findById(userId);
 		return user;
